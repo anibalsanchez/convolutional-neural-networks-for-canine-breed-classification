@@ -1,0 +1,6 @@
+__pycache__
+bottleneck_features/*.npz
+dogImages/**/*.jpg
+haarcascades/*.xml
+lfw/**/*.jpg
+saved_models/*.keras
