@@ -1,5 +1,7 @@
 # A Journey into Dog Breed Classification with Deep Learning
 
+Original blog post: <https://blog.anibalhsanchez.com/en/blogging/89-a-journey-into-dog-breed-classification-with-deep-learning.html>
+
 When I first embarked on my [Udemy Data Scientist Nanodegree](https://www.udacity.com/enrollment/nd025) Program, I never anticipated that it would lead me to create an algorithm capable of recognizing dog breeds from images. Coming from a background in writing a thesis on _Particle Imaging and Tracking in Branched Electrochemical Systems_, this project reconnected me with the fascinating field of image processing.
 
 ![Collage of Dog Breeds](images/blog/convolutional-neural-networks-for-canine-breed-classification.jpg)
