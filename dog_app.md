@@ -2,9 +2,9 @@
 
 ## Convolutional Neural Networks
 
-## Project: Write an Algorithm for a Dog Identification App 
+## Project: Write an Algorithm for a Dog Identification App
 
-This notebook walks you through one of the most popular Udacity projects across machine learning and artificial intellegence nanodegree programs.  The goal is to classify images of dogs according to their breed.  
+This notebook walks you through one of the most popular Udacity projects across machine learning and artificial intellegence nanodegree programs.  The goal is to classify images of dogs according to their breed.
 
 If you are looking for a more guided capstone project related to deep learning and convolutional neural networks, this might be just it.  Notice that even if you follow the notebook to creating your classifier, you must still create a blog post or deploy an application to fulfill the requirements of the capstone project.
 
@@ -12,7 +12,7 @@ Also notice, you may be able to use only parts of this notebook (for example cer
 
 ---
 
-In this notebook, some template code has already been provided for you, and you will need to implement additional functionality to successfully complete this project. You will not need to modify the included code beyond what is requested. Sections that begin with **'(IMPLEMENTATION)'** in the header indicate that the following block of code will require additional functionality which you must provide. Instructions will be provided for each section, and the specifics of the implementation are marked in the code block with a 'TODO' statement. Please be sure to read the instructions carefully! 
+In this notebook, some template code has already been provided for you, and you will need to implement additional functionality to successfully complete this project. You will not need to modify the included code beyond what is requested. Sections that begin with **'(IMPLEMENTATION)'** in the header indicate that the following block of code will require additional functionality which you must provide. Instructions will be provided for each section, and the specifics of the implementation are marked in the code block with a 'TODO' statement. Please be sure to read the instructions carefully!
 
 In addition to implementing code, there will be questions that you must answer which relate to the project and your implementation. Each section where you will answer a question is preceded by a **'Question X'** header. Carefully read each question and provide thorough answers in the following text boxes that begin with **'Answer:'**. Your project submission will be evaluated based on your answers to each of the questions and the implementation you provide.
 
@@ -20,12 +20,11 @@ In addition to implementing code, there will be questions that you must answer w
 
 The rubric contains _optional_ "Stand Out Suggestions" for enhancing the project beyond the minimum requirements. If you decide to pursue the "Stand Out Suggestions", you should include the code in this IPython notebook.
 
-
-
 ---
-### Why We're Here 
 
-In this notebook, you will make the first steps towards developing an algorithm that could be used as part of a mobile or web app.  At the end of this project, your code will accept any user-supplied image as input.  If a dog is detected in the image, it will provide an estimate of the dog's breed.  If a human is detected, it will provide an estimate of the dog breed that is most resembling.  The image below displays potential sample output of your finished project (... but we expect that each student's algorithm will behave differently!). 
+### Why We're Here
+
+In this notebook, you will make the first steps towards developing an algorithm that could be used as part of a mobile or web app.  At the end of this project, your code will accept any user-supplied image as input.  If a dog is detected in the image, it will provide an estimate of the dog's breed.  If a human is detected, it will provide an estimate of the dog breed that is most resembling.  The image below displays potential sample output of your finished project (... but we expect that each student's algorithm will behave differently!).
 
 ![Sample Dog Output](images/sample_dog_output.png)
 
@@ -46,15 +45,15 @@ We break the notebook into separate steps.  Feel free to use the links below to 
 
 ---
 <a id='step0'></a>
+
 ## Step 0: Import Datasets
 
 ### Import Dog Dataset
 
 In the code cell below, we import a dataset of dog images.  We populate a few variables through the use of the `load_files` function from the scikit-learn library:
-- `train_files`, `valid_files`, `test_files` - numpy arrays containing file paths to images
-- `train_targets`, `valid_targets`, `test_targets` - numpy arrays containing onehot-encoded classification labels 
-- `dog_names` - list of string-valued dog breed names for translating labels
-
+* `train_files`, `valid_files`, `test_files` - numpy arrays containing file paths to images
+* `train_targets`, `valid_targets`, `test_targets` - numpy arrays containing onehot-encoded classification labels
+* `dog_names` - list of string-valued dog breed names for translating labels
 
 ```python
 # Run the following cell only if the /workspace/home/dog-project/dog_images/ folder is not present in your workspace.
@@ -73,13 +72,7 @@ There is a known "Permission denied" issue with copying the following files. You
 '''
 ```
 
-
-
-
     '\nNOTE\nThere is a known "Permission denied" issue with copying the following files. You can ignore them.\n- Ibizan_hound_05697.jpg\n- American_foxhound_00503.jpg\n- Basset_hound_01064.jpg\n- Labrador_retriever_06476.jpg\n- Manchester_terrier_06806.jpg\n- Norwegian_lundehund_07217.jpg\n'
-
-
-
 
 ```python
 # Install the necessary package
@@ -117,8 +110,6 @@ print(imagenet_labels)
 
     ['background' 'tench' 'goldfish' ... 'bolete' 'ear' 'toilet tissue']
 
-
-
 ```python
 from sklearn.datasets import load_files
 from keras.utils import to_categorical
@@ -153,11 +144,9 @@ print(f'There are {len(test_files)} test dog images.')
     There are 835 validation dog images.
     There are 836 test dog images.
 
-
 ### Import Human Dataset
 
 In the code cell below, we import a dataset of human images, where the file paths are stored in the numpy array `human_files`.
-
 
 ```python
 import random
@@ -174,15 +163,14 @@ print(f'There are {len(human_files)} total human images.')
 
     There are 13233 total human images.
 
-
 ---
 <a id='step1'></a>
+
 ## Step 1: Detect Humans
 
 We use OpenCV's implementation of [Haar feature-based cascade classifiers](http://docs.opencv.org/trunk/d7/d8b/tutorial_py_face_detection.html) to detect human faces in images.  OpenCV provides many pre-trained face detectors, stored as XML files on [github](https://github.com/opencv/opencv/tree/master/data/haarcascades).  We have downloaded one of these detectors and stored it in the `haarcascades` directory.
 
 In the next code cell, we demonstrate how to use this detector to find human faces in a sample image.
-
 
 ```python
 import cv2
@@ -221,19 +209,16 @@ plt.show()
 
 
 
-    
+
 ![png](dog_app_files/dog_app_7_1.png)
-    
 
-
-Before using any of the face detectors, it is standard procedure to convert the images to grayscale.  The `detectMultiScale` function executes the classifier stored in `face_cascade` and takes the grayscale image as a parameter.  
+Before using any of the face detectors, it is standard procedure to convert the images to grayscale.  The `detectMultiScale` function executes the classifier stored in `face_cascade` and takes the grayscale image as a parameter.
 
 In the above code, `faces` is a numpy array of detected faces, where each row corresponds to a detected face.  Each detected face is a 1D array with four entries that specifies the bounding box of the detected face.  The first two entries in the array (extracted in the above code as `x` and `y`) specify the horizontal and vertical positions of the top left corner of the bounding box.  The last two entries in the array (extracted here as `w` and `h`) specify the width and height of the box.
 
 ### Write a Human Face Detector
 
 We can use this procedure to write a function that returns `True` if a human face is detected in an image and `False` otherwise.  This function, aptly named `face_detector`, takes a string-valued file path to an image as input and appears in the code block below.
-
 
 ```python
 def face_detector(img_path):
@@ -245,14 +230,13 @@ def face_detector(img_path):
 
 ### (IMPLEMENTATION) Assess the Human Face Detector
 
-__Question 1:__ Use the code cell below to test the performance of the `face_detector` function.  
-- What percentage of the first 100 images in `human_files` have a detected human face?  
-- What percentage of the first 100 images in `dog_files` have a detected human face? 
+**Question 1:** Use the code cell below to test the performance of the `face_detector` function.
+* What percentage of the first 100 images in `human_files` have a detected human face?
+* What percentage of the first 100 images in `dog_files` have a detected human face?
 
 Ideally, we would like 100% of human images with a detected face and 0% of dog images with a detected face.  You will see that our algorithm falls short of this goal, but still gives acceptable performance.  We extract the file paths for the first 100 images from each of the datasets and store them in the numpy arrays `human_files_short` and `dog_files_short`.
 
-__Answer:__ 
-
+**Answer:**
 
 ```python
 human_files_short = human_files[:100]
@@ -291,96 +275,44 @@ dog_false_positive_detection_rate = dog_false_positives / len(dog_files_short) *
 print("{:.2f}% dog face false-positive detection rate".format(dog_false_positive_detection_rate))
 ```
 
-
-    
 ![png](dog_app_files/dog_app_11_0.png)
-    
-
 
     99.00% human face detection rate
 
 
 
-    
+
 ![png](dog_app_files/dog_app_11_2.png)
-    
 
-
-
-    
 ![png](dog_app_files/dog_app_11_3.png)
-    
 
-
-
-    
 ![png](dog_app_files/dog_app_11_4.png)
-    
 
-
-
-    
 ![png](dog_app_files/dog_app_11_5.png)
-    
 
-
-
-    
 ![png](dog_app_files/dog_app_11_6.png)
-    
 
-
-
-    
 ![png](dog_app_files/dog_app_11_7.png)
-    
 
-
-
-    
 ![png](dog_app_files/dog_app_11_8.png)
-    
 
-
-
-    
 ![png](dog_app_files/dog_app_11_9.png)
-    
 
-
-
-    
 ![png](dog_app_files/dog_app_11_10.png)
-    
 
-
-
-    
 ![png](dog_app_files/dog_app_11_11.png)
-    
 
-
-
-    
 ![png](dog_app_files/dog_app_11_12.png)
-    
 
-
-
-    
 ![png](dog_app_files/dog_app_11_13.png)
-    
-
 
     12.00% dog face false-positive detection rate
 
+**Question 2:** This algorithmic choice necessitates that we communicate to the user that we accept human images only when they provide a clear view of a face (otherwise, we risk having unneccessarily frustrated users!). In your opinion, is this a reasonable expectation to pose on the user? If not, can you think of a way to detect humans in images that does not necessitate an image with a clearly presented face?
 
-__Question 2:__ This algorithmic choice necessitates that we communicate to the user that we accept human images only when they provide a clear view of a face (otherwise, we risk having unneccessarily frustrated users!). In your opinion, is this a reasonable expectation to pose on the user? If not, can you think of a way to detect humans in images that does not necessitate an image with a clearly presented face?
-
-__Answer:__
+**Answer:**
 
 We suggest the face detector from OpenCV as a potential way to detect human images in your algorithm, but you are free to explore other approaches, especially approaches that make use of deep learning :).  Please use the code cell below to design and test your own face detection algorithm.  If you decide to pursue this _optional_ task, report performance on each of the datasets.
-
 
 ```python
 ## (Optional) TODO: Report the performance of another
@@ -390,10 +322,10 @@ We suggest the face detector from OpenCV as a potential way to detect human imag
 
 ---
 <a id='step2'></a>
+
 ## Step 2: Detect Dogs
 
 In this section, we use a pre-trained [ResNet-50](http://ethereon.github.io/netscope/#/gist/db945b393d40bfa26006) model to detect dogs in images.  Our first line of code downloads the ResNet-50 model, along with weights that have been trained on [ImageNet](http://www.image-net.org/), a very large, very popular dataset used for image classification and other vision tasks.  ImageNet contains over 10 million URLs, each linking to an image containing an object from one of [1000 categories](https://gist.github.com/yrevar/942d3a0ac09ec9e5eb3a).  Given an image, this pre-trained ResNet-50 model returns a prediction (derived from the available categories in ImageNet) for the object that is contained in the image.
-
 
 ```python
 from keras.applications.resnet50 import ResNet50
@@ -410,7 +342,7 @@ $$
 (\text{nb_samples}, \text{rows}, \text{columns}, \text{channels}),
 $$
 
-where `nb_samples` corresponds to the total number of images (or samples), and `rows`, `columns`, and `channels` correspond to the number of rows, columns, and channels for each image, respectively.  
+where `nb_samples` corresponds to the total number of images (or samples), and `rows`, `columns`, and `channels` correspond to the number of rows, columns, and channels for each image, respectively.
 
 The `path_to_tensor` function below takes a string-valued file path to a color image as input and returns a 4D tensor suitable for supplying to a Keras CNN.  The function first loads the image and resizes it to a square image that is $224 \times 224$ pixels.  Next, the image is converted to an array, which is then resized to a 4D tensor.  In this case, since we are working with color images, each image has three channels.  Likewise, since we are processing a single image (or sample), the returned tensor will always have shape
 
@@ -418,14 +350,13 @@ $$
 (1, 224, 224, 3).
 $$
 
-The `paths_to_tensor` function takes a numpy array of string-valued image paths as input and returns a 4D tensor with shape 
+The `paths_to_tensor` function takes a numpy array of string-valued image paths as input and returns a 4D tensor with shape
 
 $$
 (\text{nb_samples}, 224, 224, 3).
 $$
 
 Here, `nb_samples` is the number of samples, or number of images, in the supplied array of image paths.  It is best to think of `nb_samples` as the number of 3D tensors (where each 3D tensor corresponds to a different image) in your dataset!
-
 
 ```python
 from keras.preprocessing import image
@@ -457,8 +388,7 @@ Getting the 4D tensor ready for ResNet-50, and for any other pre-trained model i
 
 Now that we have a way to format our image for supplying to ResNet-50, we are now ready to use the model to extract the predictions.  This is accomplished with the `predict` method, which returns an array whose $i$-th entry is the model's predicted probability that the image belongs to the $i$-th ImageNet category.  This is implemented in the `ResNet50_predict_labels` function below.
 
-By taking the argmax of the predicted probability vector, we obtain an integer corresponding to the model's predicted object class, which we can identify with an object category through the use of this [dictionary](https://gist.github.com/yrevar/942d3a0ac09ec9e5eb3a). 
-
+By taking the argmax of the predicted probability vector, we obtain an integer corresponding to the model's predicted object class, which we can identify with an object category through the use of this [dictionary](https://gist.github.com/yrevar/942d3a0ac09ec9e5eb3a).
 
 ```python
 from keras.applications.resnet50 import preprocess_input, decode_predictions
@@ -487,7 +417,6 @@ def ResNet50_predict_labels(img_path):
 While looking at the [dictionary](https://gist.github.com/yrevar/942d3a0ac09ec9e5eb3a), you will notice that the categories corresponding to dogs appear in an uninterrupted sequence and correspond to dictionary keys 151-268, inclusive, to include all categories from `'Chihuahua'` to `'Mexican hairless'`.  Thus, in order to check to see if an image is predicted to contain a dog by the pre-trained ResNet-50 model, we need only check if the `ResNet50_predict_labels` function above returns a value between 151 and 268 (inclusive).
 
 We use these ideas to complete the `dog_detector` function below, which returns `True` if a dog is detected in an image (and `False` if not).
-
 
 ```python
 ### returns "True" if a dog is detected in the image stored at img_path
@@ -624,12 +553,11 @@ def dog_detector(img_path):
 
 ### (IMPLEMENTATION) Assess the Dog Detector
 
-__Question 3:__ Use the code cell below to test the performance of your `dog_detector` function.  
-- What percentage of the images in `human_files_short` have a detected dog?  
-- What percentage of the images in `dog_files_short` have a detected dog?
+**Question 3:** Use the code cell below to test the performance of your `dog_detector` function.
+* What percentage of the images in `human_files_short` have a detected dog?
+* What percentage of the images in `dog_files_short` have a detected dog?
 
-__Answer:__ 
-
+**Answer:**
 
 ```python
 ### TODO: Test the performance of the dog_detector function
@@ -664,42 +592,40 @@ print("{:.2f}% dog face detection rate".format(dog_detection_rate))
     1.00% human face false-positive rate
     100.00% dog face detection rate
 
-
 ---
 <a id='step3'></a>
+
 ## Step 3: Create a CNN to Classify Dog Breeds (from Scratch)
 
 Now that we have functions for detecting humans and dogs in images, we need a way to predict breed from images.  In this step, you will create a CNN that classifies dog breeds.  You must create your CNN _from scratch_ (so, you can't use transfer learning _yet_!), and you must attain a test accuracy of at least 1%.  In Step 5 of this notebook, you will have the opportunity to use transfer learning to create a CNN that attains greatly improved accuracy.
 
-Be careful with adding too many trainable layers!  More parameters means longer training, which means you are more likely to need a GPU to accelerate the training process.  Thankfully, Keras provides a handy estimate of the time that each epoch is likely to take; you can extrapolate this estimate to figure out how long it will take for your algorithm to train. 
+Be careful with adding too many trainable layers!  More parameters means longer training, which means you are more likely to need a GPU to accelerate the training process.  Thankfully, Keras provides a handy estimate of the time that each epoch is likely to take; you can extrapolate this estimate to figure out how long it will take for your algorithm to train.
 
-We mention that the task of assigning breed to dogs from images is considered exceptionally challenging.  To see why, consider that *even a human* would have great difficulty in distinguishing between a Brittany and a Welsh Springer Spaniel.  
+We mention that the task of assigning breed to dogs from images is considered exceptionally challenging.  To see why, consider that _even a human_ would have great difficulty in distinguishing between a Brittany and a Welsh Springer Spaniel.
 
 Brittany | Welsh Springer Spaniel
-- | - 
+* | -
 <img src="images/Brittany_02625.jpg" width="100"> | <img src="images/Welsh_springer_spaniel_08203.jpg" width="200">
 
-It is not difficult to find other dog breed pairs with minimal inter-class variation (for instance, Curly-Coated Retrievers and American Water Spaniels).  
+It is not difficult to find other dog breed pairs with minimal inter-class variation (for instance, Curly-Coated Retrievers and American Water Spaniels).
 
 Curly-Coated Retriever | American Water Spaniel
-- | -
+* | -
 <img src="images/Curly-coated_retriever_03896.jpg" width="200"> | <img src="images/American_water_spaniel_00648.jpg" width="200">
 
-
-Likewise, recall that labradors come in yellow, chocolate, and black.  Your vision-based algorithm will have to conquer this high intra-class variation to determine how to classify all of these different shades as the same breed.  
+Likewise, recall that labradors come in yellow, chocolate, and black.  Your vision-based algorithm will have to conquer this high intra-class variation to determine how to classify all of these different shades as the same breed.
 
 Yellow Labrador | Chocolate Labrador | Black Labrador
-- | -
+* | -
 <img src="images/Labrador_retriever_06457.jpg" width="150"> | <img src="images/Labrador_retriever_06455.jpg" width="240"> | <img src="images/Labrador_retriever_06449.jpg" width="220">
 
-We also mention that random chance presents an exceptionally low bar: setting aside the fact that the classes are slightly imabalanced, a random guess will provide a correct answer roughly 1 in 133 times, which corresponds to an accuracy of less than 1%.  
+We also mention that random chance presents an exceptionally low bar: setting aside the fact that the classes are slightly imabalanced, a random guess will provide a correct answer roughly 1 in 133 times, which corresponds to an accuracy of less than 1%.
 
-Remember that the practice is far ahead of the theory in deep learning.  Experiment with many different architectures, and trust your intuition.  And, of course, have fun! 
+Remember that the practice is far ahead of the theory in deep learning.  Experiment with many different architectures, and trust your intuition.  And, of course, have fun!
 
 ### Pre-process the Data
 
 We rescale the images by dividing every pixel in every image by 255.
-
 
 ```python
 from PIL import ImageFile
@@ -725,17 +651,16 @@ test_generator = image_generator(test_files, test_targets, batch_size=64)
 ### (IMPLEMENTATION) Model Architecture
 
 Create a CNN to classify dog breed.  At the end of your code cell block, summarize the layers of your model by executing the line:
-    
+
         model.summary()
 
 We have imported some Python modules to get you started, but feel free to import as many modules as you need.  If you end up getting stuck, here's a hint that specifies a model that trains relatively fast on CPU and attains >1% test accuracy in 5 epochs:
 
 ![Sample CNN](images/sample_cnn.png)
-           
-__Question 4:__ Outline the steps you took to get to your final CNN architecture and your reasoning at each step.  If you chose to use the hinted architecture above, describe why you think that CNN architecture should work well for the image classification task.
 
-__Answer:__ 
+**Question 4:** Outline the steps you took to get to your final CNN architecture and your reasoning at each step.  If you chose to use the hinted architecture above, describe why you think that CNN architecture should work well for the image classification task.
 
+**Answer:**
 
 ```python
 from keras.layers import Conv2D, MaxPooling2D, GlobalAveragePooling2D
@@ -771,9 +696,7 @@ model = Sequential([
     /home/anibalsanchez/5_bin/miniconda3/lib/python3.11/site-packages/keras/src/layers/convolutional/base_conv.py:107: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.
       super().__init__(activity_regularizer=activity_regularizer, **kwargs)
 
-
 ### Compile the Model
-
 
 ```python
 # Set a smaller learning rate
@@ -784,12 +707,8 @@ model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accur
 model.summary()
 ```
 
-
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "sequential"</span>
 </pre>
-
-
-
 
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
 ┃<span style="font-weight: bold"> Layer (type)                    </span>┃<span style="font-weight: bold"> Output Shape           </span>┃<span style="font-weight: bold">       Param # </span>┃
@@ -810,32 +729,20 @@ model.summary()
 └─────────────────────────────────┴────────────────────────┴───────────────┘
 </pre>
 
-
-
-
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Total params: </span><span style="color: #00af00; text-decoration-color: #00af00">5,985,765</span> (22.83 MB)
 </pre>
-
-
-
 
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">5,985,765</span> (22.83 MB)
 </pre>
 
-
-
-
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">0</span> (0.00 B)
 </pre>
-
-
 
 ### (IMPLEMENTATION) Train the Model
 
 Train your model in the code cell below.  Use model checkpointing to save the model that attains the best validation loss.
 
-You are welcome to [augment the training data](https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html), but this is not a requirement. 
-
+You are welcome to [augment the training data](https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html), but this is not a requirement.
 
 ```python
 from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
@@ -876,47 +783,47 @@ model.fit(train_generator,
 ```
 
     Epoch 1/10
-    
+
     Epoch 1: val_accuracy improved from -inf to 0.01623, saving model to saved_models/weights.best.from_scratch.keras
     208/208 - 87s - 419ms/step - accuracy: 0.0138 - loss: 4.8794 - val_accuracy: 0.0162 - val_loss: 4.8441 - learning_rate: 0.0010
     Epoch 2/10
-    
+
     Epoch 2: val_accuracy improved from 0.01623 to 0.04147, saving model to saved_models/weights.best.from_scratch.keras
     208/208 - 88s - 423ms/step - accuracy: 0.0497 - loss: 4.4675 - val_accuracy: 0.0415 - val_loss: 4.4995 - learning_rate: 0.0010
     Epoch 3/10
-    
+
     Epoch 3: val_accuracy improved from 0.04147 to 0.04808, saving model to saved_models/weights.best.from_scratch.keras
     208/208 - 86s - 412ms/step - accuracy: 0.1597 - loss: 3.6059 - val_accuracy: 0.0481 - val_loss: 4.9720 - learning_rate: 0.0010
     Epoch 4/10
-    
+
     Epoch 4: val_accuracy did not improve from 0.04808
     208/208 - 83s - 398ms/step - accuracy: 0.3384 - loss: 2.6883 - val_accuracy: 0.0439 - val_loss: 5.9526 - learning_rate: 0.0010
     Epoch 5/10
-    
+
     Epoch 5: val_accuracy did not improve from 0.04808
-    
+
     Epoch 5: ReduceLROnPlateau reducing learning rate to 0.00020000000949949026.
     208/208 - 82s - 394ms/step - accuracy: 0.5300 - loss: 1.8670 - val_accuracy: 0.0403 - val_loss: 7.4455 - learning_rate: 0.0010
     Epoch 6/10
-    
+
     Epoch 6: val_accuracy did not improve from 0.04808
     208/208 - 82s - 396ms/step - accuracy: 0.6809 - loss: 1.3047 - val_accuracy: 0.0288 - val_loss: 7.9584 - learning_rate: 2.0000e-04
     Epoch 7/10
-    
+
     Epoch 7: val_accuracy did not improve from 0.04808
     208/208 - 82s - 396ms/step - accuracy: 0.7333 - loss: 1.1003 - val_accuracy: 0.0385 - val_loss: 8.4870 - learning_rate: 2.0000e-04
     Epoch 8/10
-    
+
     Epoch 8: val_accuracy did not improve from 0.04808
-    
+
     Epoch 8: ReduceLROnPlateau reducing learning rate to 4.0000001899898055e-05.
     208/208 - 80s - 385ms/step - accuracy: 0.7776 - loss: 0.9497 - val_accuracy: 0.0282 - val_loss: 9.0550 - learning_rate: 2.0000e-04
     Epoch 9/10
-    
+
     Epoch 9: val_accuracy did not improve from 0.04808
     208/208 - 84s - 404ms/step - accuracy: 0.8100 - loss: 0.8479 - val_accuracy: 0.0337 - val_loss: 8.9768 - learning_rate: 4.0000e-05
     Epoch 10/10
-    
+
     Epoch 10: val_accuracy did not improve from 0.04808
     208/208 - 82s - 393ms/step - accuracy: 0.8132 - loss: 0.8157 - val_accuracy: 0.0325 - val_loss: 9.2871 - learning_rate: 4.0000e-05
 
@@ -926,10 +833,7 @@ model.fit(train_generator,
 
     <keras.src.callbacks.history.History at 0x77ef18daddd0>
 
-
-
 ### Load the Model with the Best Validation Loss
-
 
 ```python
 model.load_weights("saved_models/weights.best.from_scratch.keras")
@@ -938,7 +842,6 @@ model.load_weights("saved_models/weights.best.from_scratch.keras")
 ### Test the Model
 
 Try out your model on the test dataset of dog images.  Ensure that your test accuracy is greater than 1%.
-
 
 ```python
 # Evaluate the model on the test data using `evaluate_generator`
@@ -953,15 +856,14 @@ print('Test accuracy: %.4f%%' % test_accuracy)
     [1m26/26[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m7s[0m 264ms/step - accuracy: 0.0505 - loss: 4.8880
     Test accuracy: 4.0865%
 
-
 ---
 <a id='step4'></a>
+
 ## Step 4: Use a CNN to Classify Dog Breeds
 
 To reduce training time without sacrificing accuracy, we show you how to train a CNN using transfer learning.  In the following step, you will get a chance to use transfer learning to train your own CNN.
 
 ### Obtain Bottleneck Features
-
 
 ```python
 bottleneck_features = np.load('bottleneck_features/DogVGG16Data.npz')
@@ -974,7 +876,6 @@ test_VGG16 = bottleneck_features['test']
 
 The model uses the the pre-trained VGG-16 model as a fixed feature extractor, where the last convolutional output of VGG-16 is fed as input to our model.  We only add a global average pooling layer and a fully connected layer, where the latter contains one node for each dog category and is equipped with a softmax.
 
-
 ```python
 VGG16_model = Sequential()
 VGG16_model.add(GlobalAveragePooling2D(input_shape=train_VGG16.shape[1:]))
@@ -986,13 +887,8 @@ VGG16_model.summary()
     /home/anibalsanchez/5_bin/miniconda3/lib/python3.11/site-packages/keras/src/layers/pooling/base_global_pooling.py:12: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.
       super().__init__(**kwargs)
 
-
-
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "sequential_1"</span>
 </pre>
-
-
-
 
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
 ┃<span style="font-weight: bold"> Layer (type)                    </span>┃<span style="font-weight: bold"> Output Shape           </span>┃<span style="font-weight: bold">       Param # </span>┃
@@ -1004,35 +900,22 @@ VGG16_model.summary()
 └─────────────────────────────────┴────────────────────────┴───────────────┘
 </pre>
 
-
-
-
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Total params: </span><span style="color: #00af00; text-decoration-color: #00af00">68,229</span> (266.52 KB)
 </pre>
-
-
-
 
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">68,229</span> (266.52 KB)
 </pre>
 
-
-
-
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">0</span> (0.00 B)
 </pre>
 
-
-
 ### Compile the Model
-
 
 ```python
 VGG16_model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
 ```
 
 ### Train the Model
-
 
 ```python
 checkpointer = ModelCheckpoint(filepath='saved_models/weights.best.VGG16.keras',
@@ -1044,7 +927,7 @@ VGG16_model.fit(train_VGG16, train_targets,
 ```
 
     Epoch 1/20
-    [1m305/334[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 996us/step - accuracy: 0.1100 - loss: 12.3089 
+    [1m305/334[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 996us/step - accuracy: 0.1100 - loss: 12.3089
     Epoch 1: val_loss improved from inf to 3.73713, saving model to saved_models/weights.best.VGG16.keras
     [1m334/334[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 2ms/step - accuracy: 0.1202 - loss: 11.9103 - val_accuracy: 0.4311 - val_loss: 3.7371
     Epoch 2/20
@@ -1130,10 +1013,7 @@ VGG16_model.fit(train_VGG16, train_targets,
 
     <keras.src.callbacks.history.History at 0x77ef18310bd0>
 
-
-
 ### Load the Model with the Best Validation Loss
-
 
 ```python
 VGG16_model.load_weights('saved_models/weights.best.VGG16.keras')
@@ -1143,7 +1023,6 @@ VGG16_model.load_weights('saved_models/weights.best.VGG16.keras')
 
 Now, we can use the CNN to test how well it identifies breed within our test dataset of dog images.  We print the test accuracy below.
 
-
 ```python
 # Test the model
 test_predictions = VGG16_model.predict(test_VGG16, batch_size=20)
@@ -1151,12 +1030,10 @@ test_accuracy = 100 * np.mean(np.argmax(test_predictions, axis=1) == np.argmax(t
 print('Test accuracy: %.4f%%' % test_accuracy)
 ```
 
-    [1m42/42[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 1ms/step 
+    [1m42/42[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 1ms/step
     Test accuracy: 71.7703%
 
-
 ### Predict Dog Breed with the Model
-
 
 ```python
 from extract_bottleneck_features import *
@@ -1172,20 +1049,21 @@ def VGG16_predict_breed(img_path):
 
 ---
 <a id='step5'></a>
+
 ## Step 5: Create a CNN to Classify Dog Breeds (using Transfer Learning)
 
 You will now use transfer learning to create a CNN that can identify dog breed from images.  Your CNN must attain at least 60% accuracy on the test set.
 
 In Step 4, we used transfer learning to create a CNN using VGG-16 bottleneck features.  In this section, you must use the bottleneck features from a different pre-trained model.  To make things easier for you, we have pre-computed the features for all of the networks that are currently available in Keras:
-- [VGG-19](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/DogVGG19Data.npz) bottleneck features
-- [ResNet-50](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/DogResnet50Data.npz) bottleneck features
-- [Inception](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/DogInceptionV3Data.npz) bottleneck features
-- [Xception](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/DogXceptionData.npz) bottleneck features
+* [VGG-19](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/DogVGG19Data.npz) bottleneck features
+* [ResNet-50](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/DogResnet50Data.npz) bottleneck features
+* [Inception](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/DogInceptionV3Data.npz) bottleneck features
+* [Xception](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/DogXceptionData.npz) bottleneck features
 
 The files are encoded as such:
 
     Dog{network}Data.npz
-    
+
 where `{network}`, in the above filename, can be one of `VGG19`, `Resnet50`, `InceptionV3`, or `Xception`.  Pick one of the above architectures, download the corresponding bottleneck features, and store the downloaded file in the `bottleneck_features/` folder in the repository.
 
 ### (IMPLEMENTATION) Obtain Bottleneck Features
@@ -1196,7 +1074,6 @@ In the code block below, extract the bottleneck features corresponding to the tr
     train_{network} = bottleneck_features['train']
     valid_{network} = bottleneck_features['valid']
     test_{network} = bottleneck_features['test']
-
 
 ```python
 ### TODO: Obtain bottleneck features from another pre-trained CNN.
@@ -1210,15 +1087,12 @@ test_Resnet50 = bottleneck_features["test"]
 ### (IMPLEMENTATION) Model Architecture
 
 Create a CNN to classify dog breed.  At the end of your code cell block, summarize the layers of your model by executing the line:
-    
+
         <your model's name>.summary()
-   
-__Question 5:__ Outline the steps you took to get to your final CNN architecture and your reasoning at each step.  Describe why you think the architecture is suitable for the current problem.
 
-__Answer:__ 
+**Question 5:** Outline the steps you took to get to your final CNN architecture and your reasoning at each step.  Describe why you think the architecture is suitable for the current problem.
 
-
-
+**Answer:**
 
 ```python
 ### TODO: Define your architecture.
@@ -1230,12 +1104,8 @@ Resnet50_model.add(Dense(133, activation="softmax"))
 Resnet50_model.summary()
 ```
 
-
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "sequential_2"</span>
 </pre>
-
-
-
 
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
 ┃<span style="font-weight: bold"> Layer (type)                    </span>┃<span style="font-weight: bold"> Output Shape           </span>┃<span style="font-weight: bold">       Param # </span>┃
@@ -1247,28 +1117,16 @@ Resnet50_model.summary()
 └─────────────────────────────────┴────────────────────────┴───────────────┘
 </pre>
 
-
-
-
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Total params: </span><span style="color: #00af00; text-decoration-color: #00af00">272,517</span> (1.04 MB)
 </pre>
-
-
-
 
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">272,517</span> (1.04 MB)
 </pre>
 
-
-
-
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">0</span> (0.00 B)
 </pre>
 
-
-
 ### (IMPLEMENTATION) Compile the Model
-
 
 ```python
 ### TODO: Compile the model.
@@ -1280,10 +1138,9 @@ Resnet50_model.compile(
 
 ### (IMPLEMENTATION) Train the Model
 
-Train your model in the code cell below.  Use model checkpointing to save the model that attains the best validation loss.  
+Train your model in the code cell below.  Use model checkpointing to save the model that attains the best validation loss.
 
-You are welcome to [augment the training data](https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html), but this is not a requirement. 
-
+You are welcome to [augment the training data](https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html), but this is not a requirement.
 
 ```python
 ### TODO: Train the model.
@@ -1390,10 +1247,7 @@ Resnet50_model.fit(
 
     <keras.src.callbacks.history.History at 0x77ef1027cdd0>
 
-
-
 ### (IMPLEMENTATION) Load the Model with the Best Validation Loss
-
 
 ```python
 ### TODO: Load the model weights with the best validation loss.
@@ -1404,7 +1258,6 @@ Resnet50_model.load_weights("saved_models/weights.best.Resnet50.keras")
 
 Try out your model on the test dataset of dog images. Ensure that your test accuracy is greater than 60%.
 
-
 ```python
 ### TODO: Calculate classification accuracy on the test dataset.
 test_predictions = Resnet50_model.predict(test_Resnet50, batch_size=20)
@@ -1414,15 +1267,15 @@ test_accuracy = 100 * np.mean(
 print("Test accuracy: %.4f%%" % test_accuracy)
 ```
 
-    [1m42/42[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 1ms/step 
+    [1m42/42[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 1ms/step
     Test accuracy: 82.2967%
-
 
 ### (IMPLEMENTATION) Predict Dog Breed with the Model
 
-Write a function that takes an image path as input and returns the dog breed (`Affenpinscher`, `Afghan_hound`, etc) that is predicted by your model.  
+Write a function that takes an image path as input and returns the dog breed (`Affenpinscher`, `Afghan_hound`, etc) that is predicted by your model.
 
 Similar to the analogous function in Step 5, your function should have three steps:
+
 1. Extract the bottleneck features corresponding to the chosen CNN model.
 2. Supply the bottleneck features as input to the model to return the predicted vector.  Note that the argmax of this prediction vector gives the index of the predicted dog breed.
 3. Use the `dog_names` array defined in Step 0 of this notebook to return the corresponding breed.
@@ -1430,9 +1283,8 @@ Similar to the analogous function in Step 5, your function should have three ste
 The functions to extract the bottleneck features can be found in `extract_bottleneck_features.py`, and they have been imported in an earlier code cell.  To obtain the bottleneck features corresponding to your chosen CNN architecture, you need to use the function
 
     extract_{network}
-    
-where `{network}`, in the above filename, should be one of `VGG19`, `Resnet50`, `InceptionV3`, or `Xception`.
 
+where `{network}`, in the above filename, should be one of `VGG19`, `Resnet50`, `InceptionV3`, or `Xception`.
 
 ```python
 ### TODO: Write a function that takes a path to an image as input
@@ -1482,25 +1334,25 @@ print(
     BestResnet50_dog_detector Beagle_01155.jpg: True
     BestResnet50_dog_detector John_Travolta_0006.jpg: False
 
-
 ---
 <a id='step6'></a>
+
 ## Step 6: Write your Algorithm
 
 Write an algorithm that accepts a file path to an image and first determines whether the image contains a human, dog, or neither.  Then,
-- if a __dog__ is detected in the image, return the predicted breed.
-- if a __human__ is detected in the image, return the resembling dog breed.
-- if __neither__ is detected in the image, provide output that indicates an error.
+* if a **dog** is detected in the image, return the predicted breed.
+* if a **human** is detected in the image, return the resembling dog breed.
+* if **neither** is detected in the image, provide output that indicates an error.
 
-You are welcome to write your own functions for detecting humans and dogs in images, but feel free to use the `face_detector` and `dog_detector` functions developed above.  You are __required__ to use your CNN from Step 5 to predict dog breed.  
+You are welcome to write your own functions for detecting humans and dogs in images, but feel free to use the `face_detector` and `dog_detector` functions developed above.  You are **required** to use your CNN from Step 5 to predict dog breed.
 
 A sample image and output for our algorithm is provided below, but feel free to design your own user experience!
 
 ![Sample Human Output](images/sample_human_2.png)
 
 This photo looks like an Afghan Hound.
-### (IMPLEMENTATION) Write your Algorithm
 
+### (IMPLEMENTATION) Write your Algorithm
 
 ```python
 ### TODO: Write your algorithm.
@@ -1526,21 +1378,20 @@ print(
     my_algorithm Beagle_01155.jpg: beagle
     my_algorithm John_Travolta_0006.jpg: human
 
-
 ---
 <a id='step7'></a>
+
 ## Step 7: Test Your Algorithm
 
-In this section, you will take your new algorithm for a spin!  What kind of dog does the algorithm think that __you__ look like?  If you have a dog, does it predict your dog's breed accurately?  If you have a cat, does it mistakenly think that your cat is a dog?
+In this section, you will take your new algorithm for a spin!  What kind of dog does the algorithm think that **you** look like?  If you have a dog, does it predict your dog's breed accurately?  If you have a cat, does it mistakenly think that your cat is a dog?
 
-### (IMPLEMENTATION) Test Your Algorithm on Sample Images!
+### (IMPLEMENTATION) Test Your Algorithm on Sample Images
 
-Test your algorithm at least six images on your computer.  Feel free to use any images you like.  Use at least two human and two dog images.  
+Test your algorithm at least six images on your computer.  Feel free to use any images you like.  Use at least two human and two dog images.
 
-__Question 6:__ Is the output better than you expected :) ?  Or worse :( ?  Provide at least three possible points of improvement for your algorithm.
+**Question 6:** Is the output better than you expected :) ?  Or worse :( ?  Provide at least three possible points of improvement for your algorithm.
 
-__Answer:__ 
-
+**Answer:**
 
 ```python
 ## TODO: Execute your algorithm from Step 6 on
@@ -1586,181 +1437,141 @@ for image_file in image_files:
 
 
 
-    
-![png](dog_app_files/dog_app_67_1.png)
-    
 
+![png](dog_app_files/dog_app_67_1.png)
 
     sampleImages/640px-Dean_Rusk,_Lyndon_B._Johnson_and_Robert_McNamara_in_Cabinet_Room_meeting_February_1968.jpg  =>  human
 
 
 
-    
-![png](dog_app_files/dog_app_67_3.png)
-    
 
+![png](dog_app_files/dog_app_67_3.png)
 
     sampleImages/640px-Football_player_before_throw.jpg  =>  neither
 
 
 
-    
-![png](dog_app_files/dog_app_67_5.png)
-    
 
+![png](dog_app_files/dog_app_67_5.png)
 
     sampleImages/640px-Riding_the_Plasma_Wave_-_Flickr_-_NASA_Goddard_Photo_and_Video.jpg  =>  neither
 
 
 
-    
-![png](dog_app_files/dog_app_67_7.png)
-    
 
+![png](dog_app_files/dog_app_67_7.png)
 
     sampleImages/640px-Sally_Ride_(1984).jpg  =>  human
 
 
 
-    
-![png](dog_app_files/dog_app_67_9.png)
-    
 
+![png](dog_app_files/dog_app_67_9.png)
 
     sampleImages/640px-Vitoria_-_Parque_de_Olárizu_-_Niebla_y_cencellada_-BT-_01.jpg  =>  neither
 
 
 
-    
-![png](dog_app_files/dog_app_67_11.png)
-    
 
+![png](dog_app_files/dog_app_67_11.png)
 
     sampleImages/Aminah_Cendrakasih,_c._1959,_by_Tati_Photo_Studio.jpg  =>  human
 
 
 
-    
-![png](dog_app_files/dog_app_67_13.png)
-    
 
+![png](dog_app_files/dog_app_67_13.png)
 
     sampleImages/Campamento_de_ganado_de_la_tribu_Mundari,_Terekeka,_Sudán_del_Sur,_2024-01-28,_DD_157.jpg  =>  neither
 
 
 
-    
-![png](dog_app_files/dog_app_67_15.png)
-    
 
+![png](dog_app_files/dog_app_67_15.png)
 
     sampleImages/Canis_lupus_familiaris.002_-_Monfero.jpg  =>  Chihuahua
 
 
 
-    
-![png](dog_app_files/dog_app_67_17.png)
-    
 
+![png](dog_app_files/dog_app_67_17.png)
 
     sampleImages/Canis_lupus_familiaris,_Neuss_(DE)_--_2024_--_0085.jpg  =>  vizsla
 
 
 
-    
-![png](dog_app_files/dog_app_67_19.png)
-    
 
+![png](dog_app_files/dog_app_67_19.png)
 
     sampleImages/Flickr_cc_runner_wisconsin_u.jpg  =>  neither
 
 
 
-    
-![png](dog_app_files/dog_app_67_21.png)
-    
 
+![png](dog_app_files/dog_app_67_21.png)
 
     sampleImages/Greenland_467_(35130903436)_(cropped).jpg  =>  neither
 
 
 
-    
-![png](dog_app_files/dog_app_67_23.png)
-    
 
+![png](dog_app_files/dog_app_67_23.png)
 
     sampleImages/Liver_yellow_dog_in_the_water_looking_at_viewer_at_golden_hour_in_Don_Det_Laos.jpg  =>  kelpie
 
 
 
-    
-![png](dog_app_files/dog_app_67_25.png)
-    
 
+![png](dog_app_files/dog_app_67_25.png)
 
     sampleImages/Mexican_Sunflower_Tithonia_rotundifolia_Flower_2163px.jpg  =>  neither
 
 
 
-    
-![png](dog_app_files/dog_app_67_27.png)
-    
 
+![png](dog_app_files/dog_app_67_27.png)
 
     sampleImages/MotorCycle.jpg  =>  neither
 
 
 
-    
-![png](dog_app_files/dog_app_67_29.png)
-    
 
+![png](dog_app_files/dog_app_67_29.png)
 
     sampleImages/RobotDragon.jpg  =>  neither
 
 
 
-    
-![png](dog_app_files/dog_app_67_31.png)
-    
 
+![png](dog_app_files/dog_app_67_31.png)
 
     sampleImages/Sikh_man,_Agra_10.jpg  =>  human
 
 
 
-    
-![png](dog_app_files/dog_app_67_33.png)
-    
 
+![png](dog_app_files/dog_app_67_33.png)
 
     sampleImages/Vitruvian.jpg  =>  human
 
 
 
-    
-![png](dog_app_files/dog_app_67_35.png)
-    
 
+![png](dog_app_files/dog_app_67_35.png)
 
     sampleImages/Woman_with_photo,_Afghanistan.jpg  =>  neither
 
 
 
-    
-![png](dog_app_files/dog_app_67_37.png)
-    
 
+![png](dog_app_files/dog_app_67_37.png)
 
     sampleImages/York_Minster_Chapter_House_Ceiling.jpg  =>  neither
 
 
 
-    
-![png](dog_app_files/dog_app_67_39.png)
-    
 
+![png](dog_app_files/dog_app_67_39.png)
 
 ## Analysis of the Human/Dog/Neither Detector
 
